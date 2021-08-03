@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
 using OpenBullet2.Auth;
-using OpenBullet2.Entities;
+using OpenBullet2.Core.Entities;
 using OpenBullet2.Helpers;
-using OpenBullet2.Models.Jobs;
-using OpenBullet2.Repositories;
-using OpenBullet2.Services;
+using OpenBullet2.Core.Models.Jobs;
+using OpenBullet2.Core.Repositories;
 using System;
 using System.Threading.Tasks;
+using OpenBullet2.Core.Services;
 
 namespace OpenBullet2.Pages
 {
@@ -36,7 +36,7 @@ namespace OpenBullet2.Pages
             var factory = new JobOptionsFactory();
             jobEntity = await JobRepo.Get(JobId);
             var oldOptions = JsonConvert.DeserializeObject<JobOptionsWrapper>(jobEntity.JobOptions, settings).Options;
-            jobOptions = factory.CloneExistant(oldOptions);
+            jobOptions = JobOptionsFactory.CloneExistant(oldOptions);
             jobType = jobEntity.JobType;
         }
 
