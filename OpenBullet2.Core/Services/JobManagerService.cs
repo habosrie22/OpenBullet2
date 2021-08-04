@@ -9,6 +9,7 @@ using RuriLib.Models.Jobs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,6 +39,16 @@ namespace OpenBullet2.Core.Services
 
             foreach (var entity in entities)
             {
+                // Convert old namespaces to support old databases
+                if (entity.JobOptions.Contains("OpenBullet2.Models") || entity.JobOptions.Contains(", OpenBullet2\""))
+                {
+                    entity.JobOptions = entity.JobOptions
+                        .Replace("OpenBullet2.Models", "OpenBullet2.Core.Models")
+                        .Replace(", OpenBullet2\"", ", OpenBullet2.Core\"");
+
+                    jobRepo.Update(entity).Wait();
+                }
+
                 var options = JsonConvert.DeserializeObject<JobOptionsWrapper>(entity.JobOptions, jsonSettings).Options;
                 var job = jobFactory.FromOptions(entity.Id, entity.Owner == null ? 0 : entity.Owner.Id, options);
                 Jobs.Add(job);
